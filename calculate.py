@@ -1,28 +1,16 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 设置中文显示（避免图表中文乱码）
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'WenQuanYi Micro Hei']
 plt.rcParams['axes.unicode_minus'] = False
-
-# ========== 1. 读取Excel配表 ==========
 print("正在读取 curve_design.xlsx ...")
 df = pd.read_excel('curve_design.xlsx', sheet_name=0)
-
-# 获取经验数据（假设C列是最终经验，第2行到第91行）
-exp_needed = df['最终经验'].tolist()  # 1级升2级需要 exp_needed[0]
+exp_needed = df['最终经验'].tolist() 
 print(f"读取成功，共 {len(exp_needed)} 级数据")
 print(f"1级升2级需要: {exp_needed[0]} 经验")
 print(f"89级升90级需要: {exp_needed[-1]} 经验")
 
-# ========== 2. 模拟函数 ==========
 def simulate(daily_exp, name, max_days=365):
-    """
-    模拟玩家升级过程
-    daily_exp: 每日获得经验
-    name: 玩家类型（用于输出）
-    max_days: 最多模拟天数
-    """
     level = 1           # 当前等级
     current_exp = 0     # 当前等级已获得的经验
     history = []        # 记录每天的等级
@@ -50,32 +38,24 @@ def simulate(daily_exp, name, max_days=365):
     df_result = pd.DataFrame(history)
     return df_result
 
-# ========== 3. 设置玩家类型 ==========
-# 你可以调整这两个数值来模拟不同付费档位
 players = [
     {"name": "零氪党", "daily_exp": 3000},      # 每天3000经验
     {"name": "月卡党", "daily_exp": 6000},      # 每天6000经验
     {"name": "双月卡党", "daily_exp": 8000},    # 每天8000经验
 ]
 
-# ========== 4. 运行模拟 ==========
 results = {}
 for player in players:
     print(f"\n正在模拟 {player['name']} ...")
     df = simulate(player["daily_exp"], player["name"])
     results[player["name"]] = df
-    
-    # 保存到CSV
     filename = f"{player['name']}_升级记录.csv"
     df.to_csv(filename, index=False, encoding='utf-8-sig')
     print(f"已保存: {filename}")
 
-# ========== 5. 绘制升级曲线图 ==========
 plt.figure(figsize=(12, 7))
-
 colors = ['blue', 'green', 'red']
 for i, (name, df) in enumerate(results.items()):
-    # 只取每天的等级数据（去重，保留每天的最后等级）
     daily_level = df.drop_duplicates(subset=['day'], keep='last')
     plt.plot(daily_level['day'], daily_level['level'], 
              label=name, color=colors[i], linewidth=2, marker='', alpha=0.8)
@@ -94,7 +74,7 @@ plt.text(5, 70, '软卡点区间\n60-80级', fontsize=10, color='orange', alpha=
 
 plt.tight_layout()
 plt.savefig('升级曲线对比图.png', dpi=150, bbox_inches='tight')
-print("\n✅ 图表已保存: 升级曲线对比图.png")
+print("\n 图表已保存: 升级曲线对比图.png")
 plt.show()
 
 # ========== 6. 分析各等级停留天数 ==========
@@ -146,9 +126,9 @@ heatmap_df = pd.DataFrame(heatmap_data,
                            index=[p["name"] for p in players],
                            columns=[f"Lv{i}" for i in range(1, 91)])
 heatmap_df.to_csv('停留天数_热力图数据.csv', encoding='utf-8-sig')
-print("\n✅ 停留天数数据已保存: 停留天数_热力图数据.csv")
+print("\n   停留天数数据已保存: 停留天数_热力图数据.csv")
 
-print("\n🎉 模拟完成！生成的文件：")
+print("\n   模拟完成！生成的文件：")
 print("   - 各玩家_升级记录.csv (详细升级日志)")
 print("   - 升级曲线对比图.png (升级曲线图)")
 print("   - 停留天数_热力图数据.csv (各等级停留天数)")
