@@ -77,7 +77,6 @@ plt.savefig('升级曲线对比图.png', dpi=150, bbox_inches='tight')
 print("\n 图表已保存: 升级曲线对比图.png")
 plt.show()
 
-# ========== 6. 分析各等级停留天数 ==========
 print("\n" + "="*50)
 print("各等级平均停留天数分析：")
 print("="*50)
@@ -110,7 +109,6 @@ for name, df in results.items():
         ratio = stay_60_80 / total_days * 100
         print(f"  60-80级总停留: {stay_60_80} 天 (占总升级时间 {ratio:.1f}%)")
 
-# ========== 7. 生成停留天数热力图数据 ==========
 # 为后续热力图准备数据
 heatmap_data = []
 for name in players:
